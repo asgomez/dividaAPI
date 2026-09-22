@@ -12,5 +12,19 @@ public class DividaConverter {
         dividaEntity.setValorComDesconto(dividaDTO.getValorComDesconto());
         dividaEntity.setValorComJuros(dividaDTO.getValorComJuros());
         dividaEntity.setValorPego(dividaDTO.getValorPego());
+
+        return dividaEntity;
+    }
+
+    public static DividaDTO convert(DividaEntity dividaEntity) {
+        DividaDTO dividaDTO = new DividaDTO();
+
+        dividaEntity.setCpfDevedor(dividaDTO.getCpfDevedor());
+        dividaEntity.setId(dividaDTO.getId());
+        dividaEntity.setValorComDesconto(dividaDTO.getValorComDesconto());
+        dividaEntity.setValorComJuros(dividaDTO.getValorComJuros());
+        dividaEntity.setValorPego(dividaDTO.getValorPego());
+
+        return dividaDTO;
     }
 }

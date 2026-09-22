@@ -14,8 +14,10 @@ public class DividaBusiness {
 
     public DividaDTO create(DividaDTO dividaDTO) {
 
-        dividaRepository.save(
+        return DividaConverter.convert(
+            dividaRepository.save(
                 DividaConverter.convert(dividaDTO)
+            )
         );
     }
 }
