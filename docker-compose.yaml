@@ -1,2 +1,52 @@
+version: '3.8'
+
 services:
-  
+  # Serviço do Banco de Dados PostgreSQL
+  postgres-db:
+    image: postgres:16-alpine
+    container_name: divida-db
+    environment:
+      POSTGRES_USER: divida_user
+      POSTGRES_PASSWORD: divida_password
+      POSTGRES_DB: divida_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - divida-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U divida_user -d divida_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Sua aplicação Spring Boot (dividatest)
+  springboot-app:
+    build: .
+    container_name: dividaAPI
+    ports:
+      - "8080:8080"
+    environment:
+      # Conexão com o Postgres (Aponta para o nome do serviço 'postgres-db')
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres-db:5432/divida_db
+      - SPRING_DATASOURCE_USERNAME=divida_user
+      - SPRING_DATASOURCE_PASSWORD=divida_password
+
+      # Conexão com o RabbitMQ (Aponta para o nome do serviço 'rabbitmq')
+      - SPRING_RABBITMQ_HOST=rabbitmq
+      - SPRING_RABBITMQ_PORT=5672
+      - SPRING_RABBITMQ_USERNAME=admin
+      - SPRING_RABBITMQ_PASSWORD=secretpassword
+    depends_on:
+      postgres-db:
+        condition: service_healthy
+    networks:
+      - divida-network
+
+volumes:
+  postgres_data:
+
+networks:
+  divida-network:
+    driver: bridge
