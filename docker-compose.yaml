@@ -1,5 +1,3 @@
-version: '3.8'
-
 services:
   # Serviço do Banco de Dados PostgreSQL
   postgres-db:
@@ -37,9 +35,23 @@ services:
         condition: service_healthy
     networks:
       - divida-network
+      
+  # SONAR LOCAL:
+  sonarqube:
+    image: sonarqube:community
+    container_name: sonarqube
+    ports:
+      - "9000:9000"
+    volumes:
+      - sonarqube_data:/opt/sonarqube/data
+      - sonarqube_extensions:/opt/sonarqube/extensions
+      - sonarqube_logs:/opt/sonarqube/logs      
 
 volumes:
   postgres_data:
+  sonarqube_data:
+  sonarqube_extensions:
+  sonarqube_logs:  
 
 networks:
   divida-network:
