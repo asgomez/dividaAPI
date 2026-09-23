@@ -1,48 +1,57 @@
 package com.alexandregomez.dividaapi.controller;
 
-import com.alexandregomez.dividaapi.business.DividaBusiness;
+import com.alexandregomez.dividaapi.service.DividaSevice;
 import com.alexandregomez.dividaapi.dto.DividaDTO;
+import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/dividas")
 public class DividaController {
 
-    private DividaBusiness dividaBusiness;
+    private DividaSevice dividaService;
 
-    public DividaController(DividaBusiness dividaBusiness){
-        this.dividaBusiness = dividaBusiness;
+    public DividaController(DividaSevice dividaBusiness){
+        this.dividaService = dividaBusiness;
     }
 
     @PostMapping
-    public DividaDTO post(@RequestBody DividaDTO dividaDTO){
-        return dividaBusiness.save(dividaDTO);
+    public DividaDTO post(@Valid @RequestBody DividaDTO dividaDTO){
+
+        return dividaService.save(dividaDTO);
     }
 
     @GetMapping("/{id}")
     public DividaDTO post(@PathVariable Long id){
-        return dividaBusiness.findById(id);
+        return dividaService.findById(id);
     }
 
     @GetMapping()
     public List<DividaDTO> get(){
-        return dividaBusiness.findAll();
+        return dividaService.findAll();
     }
 
-    @PutMapping
-    public DividaDTO put(@RequestBody DividaDTO dividaDTO){
-        return dividaBusiness.save(dividaDTO);
+    @PutMapping("/{id}")
+    public DividaDTO put(
+            @PathVariable Long id,
+            @RequestBody DividaDTO dividaDTO){
+        return dividaService.update(id, dividaDTO);
     }
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
-        dividaBusiness.delete(id);
+        dividaService.delete(id);
     }
 
     @GetMapping("/health")
-    public String healthCheck(){
-        return "no ar";
+    public Map<String, Object> healthCheck() {
+        return Map.of(
+                "status", "OK",
+                "timestamp", LocalDateTime.now()
+        );
     }
 }

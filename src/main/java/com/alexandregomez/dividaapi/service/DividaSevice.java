@@ -1,6 +1,7 @@
-package com.alexandregomez.dividaapi.business;
+package com.alexandregomez.dividaapi.service;
 
 import com.alexandregomez.dividaapi.dto.DividaDTO;
+import com.alexandregomez.dividaapi.entity.DividaEntity;
 import com.alexandregomez.dividaapi.repository.DividaRepository;
 import com.alexandregomez.dividaapi.util.DividaConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class DividaBusiness {
+public class DividaSevice {
 
     @Autowired
     private DividaRepository dividaRepository;
@@ -23,14 +24,32 @@ public class DividaBusiness {
     }
 
     public DividaDTO findById(Long id) {
+
         return DividaConverter.convert(dividaRepository.findById(id).get());
     }
 
     public List<DividaDTO> findAll() {
+
         return DividaConverter.convert(dividaRepository.findAll());
     }
 
     public void delete(Long id) {
+
         dividaRepository.delete(dividaRepository.findById(id).get());
+    }
+
+    public DividaDTO update(Long id, DividaDTO dividaDTO) {
+
+        DividaEntity divida = dividaRepository.findById(id)
+                .orElseThrow();
+
+        divida.setCpfDevedor(dividaDTO.getCpfDevedor());
+        divida.setValorPego(dividaDTO.getValorPego());
+        divida.setValorComJuros(dividaDTO.getValorComJuros());
+        divida.setValorComDesconto(dividaDTO.getValorComDesconto());
+
+        return DividaConverter.convert(
+                dividaRepository.save(divida)
+        );
     }
 }
