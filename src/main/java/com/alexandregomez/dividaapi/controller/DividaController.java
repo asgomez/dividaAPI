@@ -16,6 +16,7 @@ public class DividaController {
     private DividaSevice dividaService;
 
     public DividaController(DividaSevice dividaBusiness){
+
         this.dividaService = dividaBusiness;
     }
 
@@ -27,6 +28,7 @@ public class DividaController {
 
     @GetMapping("/{id}")
     public DividaDTO post(@PathVariable Long id){
+
         return dividaService.findById(id);
     }
 
@@ -44,6 +46,7 @@ public class DividaController {
 
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id){
+
         dividaService.delete(id);
     }
 

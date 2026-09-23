@@ -2,6 +2,7 @@ package com.alexandregomez.dividaapi.service;
 
 import com.alexandregomez.dividaapi.dto.DividaDTO;
 import com.alexandregomez.dividaapi.entity.DividaEntity;
+import com.alexandregomez.dividaapi.exception.DividaNotFoundException;
 import com.alexandregomez.dividaapi.repository.DividaRepository;
 import com.alexandregomez.dividaapi.util.DividaConverter;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -24,8 +25,10 @@ public class DividaSevice {
     }
 
     public DividaDTO findById(Long id) {
+        DividaEntity dividaEntity = dividaRepository.findById(id)
+                .orElseThrow(() -> new DividaNotFoundException(id));
 
-        return DividaConverter.convert(dividaRepository.findById(id).get());
+        return DividaConverter.convert(dividaEntity);
     }
 
     public List<DividaDTO> findAll() {
@@ -34,14 +37,16 @@ public class DividaSevice {
     }
 
     public void delete(Long id) {
+        DividaEntity divida = dividaRepository.findById(id)
+                .orElseThrow(() -> new DividaNotFoundException(id));
 
-        dividaRepository.delete(dividaRepository.findById(id).get());
+        dividaRepository.delete(divida);
     }
 
     public DividaDTO update(Long id, DividaDTO dividaDTO) {
 
         DividaEntity divida = dividaRepository.findById(id)
-                .orElseThrow();
+                .orElseThrow(() -> new DividaNotFoundException(id));
 
         divida.setCpfDevedor(dividaDTO.getCpfDevedor());
         divida.setValorPego(dividaDTO.getValorPego());
