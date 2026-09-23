@@ -8,6 +8,7 @@ public class DividaApiApplication {
 
     public static void main(String[] args) {
         SpringApplication.run(DividaApiApplication.class, args);
+
     }
 
 }
