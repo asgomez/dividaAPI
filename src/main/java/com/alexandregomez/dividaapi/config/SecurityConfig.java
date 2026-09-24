@@ -1,6 +1,5 @@
 package com.alexandregomez.dividaapi.config;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -10,8 +9,16 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 public class SecurityConfig {
 
-    @Autowired
-    private JwtAuthenticationFilter jwtAuthenticationFilter;
+    private final JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    private final JwtAuthenticationEntryPoint authenticationEntryPoint;
+
+    public SecurityConfig(
+            JwtAuthenticationFilter jwtAuthenticationFilter,
+            JwtAuthenticationEntryPoint authenticationEntryPoint) {
+        this.jwtAuthenticationFilter = jwtAuthenticationFilter;
+        this.authenticationEntryPoint = authenticationEntryPoint;
+    }
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
@@ -27,6 +34,9 @@ public class SecurityConfig {
                                 "/dividas/health"
                         ).permitAll()
                         .anyRequest().authenticated()
+                )
+                .exceptionHandling(exception -> exception
+                        .authenticationEntryPoint(authenticationEntryPoint)
                 )
                 .addFilterBefore(
                         jwtAuthenticationFilter,

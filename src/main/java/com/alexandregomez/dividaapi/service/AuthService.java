@@ -43,7 +43,7 @@ public class AuthService {
         return Jwts.builder()
                 .subject(request.getUsername())
                 .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + 3600000))
+                .expiration(new Date(System.currentTimeMillis() + 1800000))
                 .signWith(key)
                 .compact();
     }
