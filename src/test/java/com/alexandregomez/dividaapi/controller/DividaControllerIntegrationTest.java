@@ -1,5 +1,7 @@
 package com.alexandregomez.dividaapi.controller;
 
+import com.alexandregomez.dividaapi.dto.AuthRequest;
+import com.alexandregomez.dividaapi.service.AuthService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -21,6 +23,9 @@ class DividaControllerIntegrationTest {
     @Autowired
     private MockMvc mockMvc;
 
+    @Autowired
+    private AuthService authService;
+
     @Test
     void deveResponderAoHealthCheck() throws Exception {
 
@@ -41,6 +46,7 @@ class DividaControllerIntegrationTest {
             """;
 
         String resposta = mockMvc.perform(post("/dividas")
+                        .header("Authorization", "Bearer " + gerarToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonCriacao))
                 .andExpect(status().isOk())
@@ -53,7 +59,8 @@ class DividaControllerIntegrationTest {
                 resposta.replaceAll(".*\"id\":(\\d+).*", "$1")
         );
 
-        mockMvc.perform(get("/dividas/" + id))
+        mockMvc.perform(get("/dividas/" + id)
+                        .header("Authorization", "Bearer " + gerarToken()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.cpfDevedor").value("12345678900"));
@@ -68,23 +75,38 @@ class DividaControllerIntegrationTest {
             """;
 
         mockMvc.perform(put("/dividas/" + id)
+                        .header("Authorization", "Bearer " + gerarToken())
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(jsonAtualizacao))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(id))
                 .andExpect(jsonPath("$.cpfDevedor").value("98765432100"));
 
-        mockMvc.perform(delete("/dividas/" + id))
+        mockMvc.perform(delete("/dividas/" + id)
+                        .header("Authorization", "Bearer " + gerarToken()))
                 .andExpect(status().isOk());
 
-        mockMvc.perform(get("/dividas/" + id))
+        mockMvc.perform(get("/dividas/" + id)
+                        .header("Authorization", "Bearer " + gerarToken()))
                 .andExpect(status().isNotFound());
     }
 
     @Test
     void deveListarDividas() throws Exception {
 
-        mockMvc.perform(get("/dividas"))
+        mockMvc.perform(get("/dividas")
+                        .header("Authorization", "Bearer " + gerarToken()))
                 .andExpect(status().isOk());
+    }
+
+    private String gerarToken() {
+
+        AuthRequest request = new AuthRequest();
+        request.setClientId("divida-api");
+        request.setClientSecret("divida-api-secret");
+        request.setUsername("admin");
+        request.setPassword("admin123");
+
+        return authService.generateToken(request);
     }
 }
