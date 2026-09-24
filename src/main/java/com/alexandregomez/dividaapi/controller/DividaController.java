@@ -9,8 +9,11 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Map;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
+
 @RestController
 @RequestMapping("/dividas")
+@SecurityRequirement(name = "bearerAuth")
 public class DividaController {
 
     private DividaSevice dividaService;
